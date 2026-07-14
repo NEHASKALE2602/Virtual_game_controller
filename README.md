@@ -1,0 +1,5 @@
+Project title
+Objective
+Features
+Technologies
+Folder structure
