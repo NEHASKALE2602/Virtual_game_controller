@@ -1,0 +1,301 @@
+/* ===========================
+   Main Window
+=========================== */
+
+QMainWindow,
+QWidget {
+    background-color: #0B1120;
+    color: white;
+    font-family: "Segoe UI";
+    font-size: 14px;
+}
+
+/* ===========================
+   Sidebar
+=========================== */
+
+#sidebar {
+    background-color: #111827;
+    border-right: 2px solid #1E293B;
+}
+
+/* ===========================
+   Logo
+=========================== */
+
+#logoLabel {
+    font-size: 22px;
+    font-weight: bold;
+    color: #38BDF8;
+    padding: 20px;
+}
+
+/* ===========================
+   Sidebar Button
+=========================== */
+
+#sidebarButton {
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    text-align: left;
+    padding-left: 18px;
+    font-size: 15px;
+}
+
+#sidebarButton:hover {
+    background-color: #2563EB;
+    color: white;
+}
+
+#sidebarButton:pressed {
+    background-color: #1D4ED8;
+}
+
+/* ===========================
+   Version Label
+=========================== */
+
+#versionLabel {
+    color: gray;
+    padding: 10px;
+}
+
+/* ===========================
+   Top Bar
+=========================== */
+
+QLabel {
+    color: white;
+}
+/* ===========================
+   Top Bar
+=========================== */
+
+#topBar{
+    background:#111827;
+    border-bottom:2px solid #1E293B;
+}
+
+#titleLabel{
+    font-size:22px;
+    font-weight:bold;
+    color:#38BDF8;
+}
+
+#searchBox{
+    background:#1F2937;
+    color:white;
+    border:1px solid #374151;
+    border-radius:10px;
+    padding:8px;
+    min-width:250px;
+}
+
+#topButton{
+    background:#1F2937;
+    color:white;
+    border:none;
+    border-radius:10px;
+    min-width:40px;
+    min-height:40px;
+}
+
+#topButton:hover{
+    background:#2563EB;
+}
+/* Dashboard Card */
+
+#dashboardCard{
+
+    background:#182231;
+
+    border:1px solid #263548;
+
+    border-radius:18px;
+
+}
+
+#dashboardCard:hover{
+
+    border:2px solid #29B6F6;
+
+}
+
+#cardTitle{
+
+    color:#8FA7C3;
+
+    font-size:14px;
+
+    font-weight:bold;
+
+}
+
+#cardValue{
+
+    color:white;
+
+    font-size:26px;
+
+    font-weight:bold;
+
+}
+/* ===========================
+   Status Bar
+=========================== */
+
+#statusBar{
+    background:#111827;
+    border-top:2px solid #1E293B;
+    min-height:35px;
+}
+
+#statusBar QLabel{
+    color:white;
+    font-size:13px;
+}
+/* ==========================
+   Camera Page
+========================== */
+
+#pageTitle{
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    color:#29B6F6;
+
+}
+
+#cameraFrame{
+
+    background:#182231;
+
+    border-radius:18px;
+
+    border:1px solid #263548;
+
+}
+
+#cameraLabel{
+
+    background:black;
+
+    color:white;
+
+    border-radius:12px;
+
+    border:2px dashed #29B6F6;
+
+    font-size:22px;
+
+}
+
+#infoPanel{
+
+    background:#182231;
+
+    border-radius:18px;
+
+    border:1px solid #263548;
+
+}
+
+#infoCard{
+
+    background:#111827;
+
+    border-radius:12px;
+
+    padding:10px;
+
+    border:1px solid #2E3D55;
+
+}
+
+#infoTitle{
+
+    color:#9FB3C8;
+
+    font-size:13px;
+
+}
+
+#infoValue{
+
+    color:white;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+}
+#cameraButton{
+
+    background:#2563EB;
+    color:white;
+    border:none;
+    border-radius:10px;
+    padding:10px 18px;
+    font-size:14px;
+    font-weight:bold;
+}
+
+#cameraButton:hover{
+
+    background:#1D4ED8;
+}
+
+#cameraButton:disabled{
+
+    background:#374151;
+    color:#9CA3AF;
+}
+/* ==========================
+   Game Library
+========================== */
+
+#gameCard{
+    background:#182231;
+    border:2px solid #2563EB;
+    border-radius:18px;
+    padding:15px;
+}
+
+#gameCard:hover{
+    border:2px solid #29B6F6;
+}
+
+#gameIcon{
+    font-size:56px;
+    qproperty-alignment:'AlignCenter';
+}
+
+#gameTitle{
+    color:white;
+    font-size:22px;
+    font-weight:bold;
+}
+
+#gameDescription{
+    color:#B0BEC5;
+    font-size:14px;
+}
+
+#playButton{
+    background:#2563EB;
+    color:white;
+    border:none;
+    border-radius:10px;
+    padding:10px;
+    font-size:15px;
+    font-weight:bold;
+    min-height:40px;
+}
+
+#playButton:hover{
+    background:#1D4ED8;
+}

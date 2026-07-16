@@ -1,77 +1,24 @@
-import cv2
+import sys
+from pathlib import Path
+from PySide6.QtWidgets import QApplication
 
-from detection.hand_detector import HandDetector
-from detection.gesture_detector import GestureDetector
-from controllers.game_controller import GameController
-from utils.fps import FPS
+from ui.main_window import MainWindow
 
-# Open Webcam
-camera = cv2.VideoCapture(0)
 
-if not camera.isOpened():
-    print("Cannot open webcam")
-    exit()
+def main():
+    app = QApplication(sys.argv)
 
-# Create Objects
-hand_detector = HandDetector()
-gesture_detector = GestureDetector()
-game_controller = GameController()
-fps_counter = FPS()
+    style_file = Path("ui/styles/style.qss")
 
-while True:
+    if style_file.exists():
+        with open(style_file, "r") as file:
+            app.setStyleSheet(file.read())
 
-    success, frame = camera.read()
+    window = MainWindow()
+    window.show()
 
-    if not success:
-        break
+    sys.exit(app.exec())
 
-    # Flip Frame
-    frame = cv2.flip(frame, 1)
 
-    # Detect Hand
-    frame, landmarks = hand_detector.detect(frame)
-
-    gesture = "NO HAND"
-
-    if landmarks:
-
-        # Detect Gesture
-        gesture = gesture_detector.recognize(landmarks)
-
-        # Perform Game Action
-        game_controller.press_key(gesture)
-
-    # FPS
-    fps = fps_counter.calculate()
-
-    # Show FPS
-    cv2.putText(
-        frame,
-        f"FPS : {fps}",
-        (20, 40),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        1,
-        (0, 255, 0),
-        2
-    )
-
-    # Show Gesture
-    cv2.putText(
-        frame,
-        f"Gesture : {gesture}",
-        (20, 80),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        1,
-        (255, 0, 0),
-        2
-    )
-
-    # Display
-    cv2.imshow("Virtual Game Controller", frame)
-
-    # Press Q to Exit
-    if cv2.waitKey(1) & 0xFF == ord("q"):
-        break
-
-camera.release()
-cv2.destroyAllWindows()
+if __name__ == "__main__":
+    main()

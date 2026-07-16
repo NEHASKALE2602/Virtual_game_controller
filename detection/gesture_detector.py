@@ -38,25 +38,21 @@ class GestureDetector:
 
     def recognize(self, landmarks):
 
+        if len(landmarks) < 21:
+            return "NONE"
+
         fingers = self.fingers_up(landmarks)
 
-        print("Fingers:", fingers)
-
-    # ☝️ One Finger (Run Car)
         if fingers == [0, 1, 0, 0, 0]:
             return "ACCELERATE"
 
-    # ✌️ Two Fingers (Turn Left)
         elif fingers == [0, 1, 1, 0, 0]:
             return "LEFT"
 
-    # 🤟 Three Fingers (Turn Right)
         elif fingers == [0, 1, 1, 1, 0]:
             return "RIGHT"
 
-    # 🖐️ Open Palm (Stop Car)
         elif fingers == [1, 1, 1, 1, 1] or fingers == [0, 1, 1, 1, 1]:
             return "BRAKE"
 
-        else:
             return "NONE"
