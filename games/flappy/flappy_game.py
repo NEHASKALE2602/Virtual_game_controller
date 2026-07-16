@@ -48,8 +48,9 @@ class FlappyGame(QWidget):
         # ---------------- Gesture Control ----------------
 
         gesture = controller.get_gesture()
+        print("Gesture:", gesture)
 
-        if gesture == "Open Palm":
+        if gesture == "OPEN PALM":
             self.velocity = self.jump_force
 
         # ---------------- Gravity ----------------

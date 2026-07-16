@@ -299,3 +299,109 @@ QLabel {
 #playButton:hover{
     background:#1D4ED8;
 }
+/* ======================================================
+   Hero Card
+====================================================== */
+
+#heroCard{
+
+    background:qlineargradient(
+        x1:0,y1:0,
+        x2:1,y2:1,
+        stop:0 #151B40,
+        stop:1 #0D1735
+    );
+
+    border:2px solid #6C4DFF;
+
+    border-radius:24px;
+
+}
+
+
+/* ======================================================
+   Small Cards
+====================================================== */
+
+#modernCard{
+
+    background:#141F33;
+
+    border:2px solid #243654;
+
+    border-radius:20px;
+
+}
+
+#modernCard:hover{
+
+    border:2px solid #39C5FF;
+
+}
+
+
+/* ======================================================
+   Animated Buttons
+====================================================== */
+
+#modernButton{
+
+    background:#6C4DFF;
+
+    color:white;
+
+    border:none;
+
+    border-radius:14px;
+
+    padding:12px;
+
+    font-size:15px;
+
+    font-weight:bold;
+
+}
+
+#modernButton:hover{
+
+    background:#7D61FF;
+
+}
+
+
+/* ======================================================
+   Dashboard Titles
+====================================================== */
+
+#heroTitle{
+
+    font-size:34px;
+
+    font-weight:bold;
+
+    color:white;
+
+}
+
+#heroSubtitle{
+
+    font-size:16px;
+
+    color:#B6C8E6;
+
+}
+
+
+/* ======================================================
+   Status Values
+====================================================== */
+
+#statusValue{
+
+    font-size:30px;
+
+    font-weight:bold;
+
+    color:white;
+
+}

@@ -18,7 +18,11 @@ class HandDetector:
 
         self.drawer = mp.solutions.drawing_utils
 
+        # Hand Center
         self.hand_center = None
+
+        # Index Finger Tip
+        self.index_tip = None
 
     def detect(self, frame):
 
@@ -29,6 +33,7 @@ class HandDetector:
         landmarks = []
 
         self.hand_center = None
+        self.index_tip = None
 
         if results.multi_hand_landmarks:
 
@@ -49,6 +54,10 @@ class HandDetector:
 
                 landmarks.append([idx, x, y])
 
+            # -----------------------------
+            # Hand Center
+            # -----------------------------
+
             wrist = landmarks[0]
             middle = landmarks[9]
 
@@ -57,6 +66,31 @@ class HandDetector:
 
             self.hand_center = (cx, cy)
 
-            cv2.circle(frame, (cx, cy), 8, (0, 255, 255), -1)
+            cv2.circle(
+                frame,
+                (cx, cy),
+                8,
+                (0, 255, 255),
+                -1
+            )
+
+            # -----------------------------
+            # Index Finger Tip
+            # -----------------------------
+
+            index = hand.landmark[8]
+
+            ix = int(index.x * w)
+            iy = int(index.y * h)
+
+            self.index_tip = (ix, iy)
+
+            cv2.circle(
+                frame,
+                (ix, iy),
+                10,
+                (0, 255, 0),
+                -1
+            )
 
         return frame, landmarks

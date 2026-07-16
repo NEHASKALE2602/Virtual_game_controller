@@ -36,31 +36,44 @@ class CameraThread(QThread):
             if not ret:
                 continue
 
-            # Flip Camera
+            # Mirror Camera
             frame = cv2.flip(frame, 1)
 
+            # -----------------------------
             # Hand Detection
-            frame, landmarks = self.hand_detector.detect(frame)
-            if self.hand_detector.hand_center:
+            # -----------------------------
 
-                x, y = self.hand_detector.hand_center
+            frame, landmarks = self.hand_detector.detect(frame)
+
+            # Use INDEX FINGER instead of Hand Center
+            if self.hand_detector.index_tip:
+
+                x, y = self.hand_detector.index_tip
 
                 controller.set_hand_position(x, y)
 
+            # -----------------------------
             # FPS
+            # -----------------------------
+
             current_time = time.time()
 
             fps = int(1 / (current_time - self.previous_time))
 
             self.previous_time = current_time
 
+            # -----------------------------
             # Gesture Detection
+            # -----------------------------
+
             gesture = self.gesture_detector.recognize(landmarks)
 
-            # Send Gesture to Controller
             controller.set_gesture(gesture)
 
+            # -----------------------------
             # Draw FPS
+            # -----------------------------
+
             cv2.putText(
                 frame,
                 f"FPS : {fps}",
@@ -71,7 +84,10 @@ class CameraThread(QThread):
                 2
             )
 
+            # -----------------------------
             # Draw Gesture
+            # -----------------------------
+
             cv2.putText(
                 frame,
                 f"Gesture : {gesture}",
@@ -82,7 +98,28 @@ class CameraThread(QThread):
                 2
             )
 
-            # Info Panel Data
+            # -----------------------------
+            # Draw Index Finger Coordinates
+            # -----------------------------
+
+            if self.hand_detector.index_tip:
+
+                ix, iy = self.hand_detector.index_tip
+
+                cv2.putText(
+                    frame,
+                    f"Finger : ({ix},{iy})",
+                    (20, 120),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.8,
+                    (0, 255, 255),
+                    2
+                )
+
+            # -----------------------------
+            # Dashboard Data
+            # -----------------------------
+
             hands = 1 if landmarks else 0
             confidence = 100 if landmarks else 0
 
@@ -97,7 +134,10 @@ class CameraThread(QThread):
 
             self.camera_data.emit(data)
 
-            # Convert Frame for Qt
+            # -----------------------------
+            # Convert Frame
+            # -----------------------------
+
             rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
             h, w, ch = rgb.shape
@@ -117,4 +157,5 @@ class CameraThread(QThread):
     def stop(self):
 
         self.running = False
+
         self.wait()
