@@ -23,20 +23,7 @@ class Sidebar(QWidget):
         self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.main_layout.setSpacing(15)
 
-        # ==========================================
-        # Logo
-        # ==========================================
-
-        self.logo = QLabel("🎮\n\nVIRTUAL\nGAME CONTROLLER")
-
-        self.logo.setObjectName("logoLabel")
-
-        self.logo.setAlignment(Qt.AlignCenter)
-
-        self.logo.setFixedHeight(170)
-
-        self.main_layout.addWidget(self.logo)
-
+        
         # ==========================================
         # Navigation Buttons
         # ==========================================

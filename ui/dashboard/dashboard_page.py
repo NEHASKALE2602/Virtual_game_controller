@@ -1,14 +1,13 @@
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
     QWidget,
     QLabel,
     QFrame,
     QGridLayout,
     QVBoxLayout,
-    QSizePolicy
+    QPushButton
 )
-
-
 class DashboardCard(QFrame):
 
     def __init__(self, title, value):
@@ -41,53 +40,26 @@ class DashboardPage(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.layout = QGridLayout(self)
+        self.layout = QVBoxLayout(self)
 
         self.layout.setContentsMargins(25, 25, 25, 25)
-        self.layout.setHorizontalSpacing(20)
-        self.layout.setVerticalSpacing(20)
+        self.layout.setSpacing(20)
 
-        cards = [
+    # ===========================================
+    # Hero Banner
+    # ===========================================
 
-            ("📷 Camera Status", "Disconnected"),
+        self.banner = QLabel()
 
-            ("🤖 AI Status", "Stopped"),
+        self.banner.setObjectName("heroBanner")
 
-            ("✋ Current Gesture", "NO HAND"),
+        self.banner.setMinimumHeight(450)
 
-            ("🙌 Hands Detected", "0"),
+        self.banner.setScaledContents(True)
 
-            ("⚡ FPS", "0"),
+        self.banner.setPixmap(QPixmap("assets/images/hero_bg.jpg"))
 
-            ("🎮 Current Game", "None"),
+        self.layout.addWidget(self.banner)
 
-            ("🎯 Confidence", "0%"),
-
-            ("🏆 High Score", "0")
-
-        ]
-
-        row = 0
-        col = 0
-
-        for title, value in cards:
-
-            card = DashboardCard(title, value)
-
-            if not hasattr(self, "cards"):
-                self.cards = {}
-
-            self.cards[title] = card
-
-            self.layout.addWidget(card, row, col)
-
-            col += 1
-
-            if col == 2:
-                col = 0
-                row += 1
     def update_card(self, title, value):
-
-        if title in self.cards:
-
-            self.cards[title].value.setText(str(value))
+        pass
