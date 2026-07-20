@@ -483,3 +483,293 @@ QLabel {
     background:#1D4ED8;
 
 }
+/*==========================================================
+GESTURE PAGE
+==========================================================*/
+
+#pageTitle{
+
+    font-size:30px;
+    font-weight:bold;
+    color:#27B6FF;
+
+}
+
+#gestureIcon{
+
+    font-size:70px;
+    color:#27B6FF;
+
+}
+
+#gestureName{
+
+    font-size:26px;
+    font-weight:bold;
+    color:white;
+
+}
+
+#sectionTitle{
+
+    font-size:22px;
+    font-weight:bold;
+    color:#27B6FF;
+
+}
+
+#engineStatus{
+
+    font-size:18px;
+    font-weight:bold;
+    color:#55FF88;
+
+}
+
+
+
+/*==========================================================
+INFO CARD
+==========================================================*/
+
+#infoCard{
+
+    background:#151C2D;
+
+    border:2px solid #2A3550;
+
+    border-radius:16px;
+
+}
+
+#infoCard:hover{
+
+    border:2px solid #27B6FF;
+
+}
+
+
+
+/*==========================================================
+INFO TITLE
+==========================================================*/
+
+#infoTitle{
+
+    font-size:15px;
+
+    color:#9CA3AF;
+
+}
+
+
+
+/*==========================================================
+INFO VALUE
+==========================================================*/
+
+#infoValue{
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    color:white;
+
+}
+
+
+
+/*==========================================================
+GESTURE CARDS
+==========================================================*/
+
+#gestureCard{
+
+    background:#151C2D;
+
+    border:2px solid #2A3550;
+
+    border-radius:15px;
+
+}
+
+#gestureCard:hover{
+
+    border:2px solid #27B6FF;
+
+}
+
+
+
+/*==========================================================
+GESTURE EMOJI
+==========================================================*/
+
+#gestureEmoji{
+
+    font-size:38px;
+
+}
+
+
+
+/*==========================================================
+GESTURE TEXT
+==========================================================*/
+
+#gestureText{
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    color:white;
+
+}
+/*=========================================================
+GAME CONTROL CARDS
+=========================================================*/
+
+#gestureCard{
+
+    background-color:#151C2D;
+
+    border:2px solid #2B3B55;
+
+    border-radius:22px;
+
+}
+
+#gestureCard:hover{
+
+    border:2px solid #29B6F6;
+
+    background-color:#1A2338;
+
+}
+
+
+
+/*=========================================================
+PAGE TITLE
+=========================================================*/
+
+#pageTitle{
+
+    color:white;
+
+    font-size:34px;
+
+    font-weight:bold;
+
+}
+
+
+
+/*=========================================================
+GESTURE EMOJI
+=========================================================*/
+
+#gestureEmoji{
+
+    color:white;
+
+    font-size:60px;
+
+    font-weight:bold;
+
+}
+
+
+
+/*=========================================================
+GESTURE TITLE
+=========================================================*/
+
+#gestureTitle{
+
+    color:#29B6F6;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+}
+
+
+
+/*=========================================================
+GESTURE DESCRIPTION
+=========================================================*/
+
+#gestureInfo{
+
+    color:#D5D9E3;
+
+    font-size:16px;
+
+}
+
+
+
+/*=========================================================
+SMOOTH HOVER
+=========================================================*/
+
+QFrame#gestureCard{
+
+    padding:10px;
+
+}
+/* ==========================================================
+   ANALYTICS PAGE
+========================================================== */
+
+#analyticsPanel
+{
+    background-color: #1E2433;
+    border: 1px solid #31384A;
+    border-radius: 20px;
+}
+
+#panelTitle
+{
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+    padding: 12px;
+}
+
+#analyticsCard
+{
+    background-color: #252D3F;
+    border: 1px solid #39445C;
+    border-radius: 16px;
+}
+
+#analyticsCard:hover
+{
+    border: 1px solid #00D8FF;
+    background-color: #2B3550;
+}
+
+#analyticsTitle
+{
+    color: #8DA2C0;
+    font-size: 13px;
+    font-weight: 600;
+    background: transparent;
+    border: none;
+    padding: 0px;
+}
+
+#analyticsValue
+{
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    background: transparent;
+    border: none;
+    padding: 0px;
+}

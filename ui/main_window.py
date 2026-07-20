@@ -65,11 +65,15 @@ class MainWindow(QMainWindow):
         self.camera_page.dashboard = self.home_page
         self.home_page.update_card("🎮 Current Game", "None")
         self.gesture_page = GesturePage()
+        self.camera_page.gesture_page = self.gesture_page
         self.analytics_page = AnalyticsPage()
         self.profile_page = ProfilePage()
         self.settings_page = SettingsPage()
         self.about_page = AboutPage()
         self.play_game_page = PlayGamePage()
+
+        self.play_game_page.analytics = self.analytics_page 
+
 
         self.stack.addWidget(self.home_page)        # Index 0
         self.stack.addWidget(self.games_page)       # Index 1
@@ -94,7 +98,7 @@ class MainWindow(QMainWindow):
         self.sidebar.settings_btn.clicked.connect(lambda: self.stack.setCurrentIndex(6))
         self.sidebar.about_btn.clicked.connect(lambda: self.stack.setCurrentIndex(7))
         self.games_page.game_selected.connect(self.open_game)
-
+        # ==========================================
         # ---------------- Bottom Status Bar ----------------
         self.status = StatusBar()
         self.top_bar.setFixedHeight(70)

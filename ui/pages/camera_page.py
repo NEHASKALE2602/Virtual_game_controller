@@ -130,7 +130,11 @@ class CameraPage(QWidget):
 
     def start_camera(self):
 
+        print("Start Button Clicked")
+
         if self.camera_thread is None:
+
+            print("Creating Camera Thread")
 
             self.camera_thread = CameraThread()
 
@@ -139,13 +143,10 @@ class CameraPage(QWidget):
 
             self.camera_thread.start()
 
+            print("Camera Thread Started")
+
             self.start_button.setEnabled(False)
             self.stop_button.setEnabled(True)
-
-    # ==========================================
-    # Stop Camera
-    # ==========================================
-
     def stop_camera(self):
 
         if self.camera_thread:

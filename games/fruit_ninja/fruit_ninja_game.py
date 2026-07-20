@@ -11,6 +11,8 @@ from PySide6.QtGui import (
 from PySide6.QtWidgets import QWidget
 
 from controller.controller_manager import controller
+from controller.analytics_manager import analytics
+from controller.controller_manager import controller
 
 
 class FruitNinjaGame(QWidget):
@@ -402,7 +404,21 @@ class FruitNinjaGame(QWidget):
         for particle in dead:
 
             self.particles.remove(particle)
+        analytics.update(
 
+            game="Fruit Ninja",
+
+            score=self.score,
+
+            high_score=self.high_score,
+
+            status="Playing",
+
+            time_played="00:00",
+
+            gesture=controller.get_gesture()
+
+        )
         self.update()
         # ==========================================================
     # PAINT GAME

@@ -3,34 +3,63 @@ from PySide6.QtWidgets import (
     QWidget,
     QLabel,
     QVBoxLayout,
-    QHBoxLayout,
     QGridLayout,
-    QFrame
+    QFrame,
+    QSizePolicy
 )
 
+class GestureCard(QFrame):
 
-class InfoCard(QFrame):
-
-    def __init__(self, title, value):
+    def __init__(self, emoji, title, line1="", line2=""):
 
         super().__init__()
 
-        self.setObjectName("infoCard")
+        self.setObjectName("gestureCard")
 
+        self.setMinimumSize(280, 220)
+
+        self.setSizePolicy(
+
+            QSizePolicy.Expanding,
+
+            QSizePolicy.Expanding
+
+        )
         layout = QVBoxLayout(self)
 
         layout.setContentsMargins(20, 20, 20, 20)
 
-        self.title = QLabel(title)
-        self.title.setObjectName("infoTitle")
+        layout.setSpacing(10)
 
-        self.value = QLabel(value)
-        self.value.setObjectName("infoValue")
-        self.value.setAlignment(Qt.AlignCenter)
+        self.emoji = QLabel(emoji)
+        self.emoji.setObjectName("gestureEmoji")
+        self.emoji.setAlignment(Qt.AlignCenter)
+
+        self.title = QLabel(title)
+        self.title.setObjectName("gestureTitle")
+        self.title.setAlignment(Qt.AlignCenter)
+
+        self.line1 = QLabel(line1)
+        self.line1.setObjectName("gestureInfo")
+        self.line1.setAlignment(Qt.AlignCenter)
+
+        self.line2 = QLabel(line2)
+        self.line2.setObjectName("gestureInfo")
+        self.line2.setAlignment(Qt.AlignCenter)
+
+        layout.addStretch()
+
+        layout.addWidget(self.emoji)
 
         layout.addWidget(self.title)
+
+        layout.addSpacing(8)
+
+        layout.addWidget(self.line1)
+
+        layout.addWidget(self.line2)
+
         layout.addStretch()
-        layout.addWidget(self.value)
 
 
 class GesturePage(QWidget):
@@ -41,15 +70,11 @@ class GesturePage(QWidget):
 
         main_layout = QVBoxLayout(self)
 
-        main_layout.setContentsMargins(30, 30, 30, 30)
+        main_layout.setContentsMargins(40, 25, 40, 25)
 
-        main_layout.setSpacing(25)
+        main_layout.setSpacing(20)
 
-        # =====================================
-        # Title
-        # =====================================
-
-        title = QLabel("🤖 AI Gesture Recognition")
+        title = QLabel("🎮 GAME CONTROLS")
 
         title.setObjectName("pageTitle")
 
@@ -57,223 +82,113 @@ class GesturePage(QWidget):
 
         main_layout.addWidget(title)
 
-        # =====================================
-        # Current Gesture
-        # =====================================
+        self.grid = QGridLayout()
+        self.grid.setColumnStretch(0, 1)
 
-        self.gesture_icon = QLabel("✋")
+        self.grid.setColumnStretch(1, 1)
 
-        self.gesture_icon.setAlignment(Qt.AlignCenter)
+        self.grid.setColumnStretch(2, 1)
 
-        self.gesture_icon.setObjectName("gestureIcon")
+        self.grid.setRowStretch(0, 1)
 
-        self.gesture_name = QLabel("OPEN PALM")
+        self.grid.setRowStretch(1, 1)
 
-        self.gesture_name.setAlignment(Qt.AlignCenter)
+        self.grid.setHorizontalSpacing(25)
 
-        self.gesture_name.setObjectName("gestureName")
+        self.grid.setVerticalSpacing(25)
 
-        main_layout.addWidget(self.gesture_icon)
+        self.grid.setAlignment(Qt.AlignCenter)
 
-        main_layout.addWidget(self.gesture_name)
+        main_layout.addLayout(self.grid)
+        # ======================================================
+# FIRST ROW
+# ======================================================
 
-        # =====================================
-        # Information Cards
-        # =====================================
+        self.open_palm = GestureCard(
 
-        grid = QGridLayout()
+            "✋",
 
-        grid.setHorizontalSpacing(20)
+            "OPEN PALM",
 
-        grid.setVerticalSpacing(20)
+            "🍎 Fruit Ninja",
 
-        self.ai_card = InfoCard("AI Status", "ACTIVE")
+            "Slice Fruits"
 
-        self.track_card = InfoCard("Tracking", "TRACKING")
+        )
 
-        self.conf_card = InfoCard("Confidence", "100%")
+        self.pointing = GestureCard(
 
-        self.hand_card = InfoCard("Hands", "1")
+            "☝",
 
-        self.finger_card = InfoCard("Fingers", "5")
+            "POINTING",
 
-        self.fps_card = InfoCard("FPS", "30")
+            "🚀 Space Shooter",
 
-        grid.addWidget(self.ai_card, 0, 0)
+            "Move Spaceship"
 
-        grid.addWidget(self.track_card, 0, 1)
+        )
 
-        grid.addWidget(self.conf_card, 0, 2)
+        self.fist = GestureCard(
 
-        grid.addWidget(self.hand_card, 1, 0)
+            "✊",
 
-        grid.addWidget(self.finger_card, 1, 1)
+            "FIST",
 
-        grid.addWidget(self.fps_card, 1, 2)
+            "⏸ Pause Game",
 
-        main_layout.addLayout(grid)
-                # =====================================
-        # Supported Gestures
-        # =====================================
+            "Restart Game"
 
-        supported_title = QLabel("Supported Gestures")
+        )
 
-        supported_title.setObjectName("sectionTitle")
+        self.grid.addWidget(self.open_palm, 0, 0)
 
-        supported_title.setAlignment(Qt.AlignCenter)
+        self.grid.addWidget(self.pointing, 0, 1)
 
-        main_layout.addWidget(supported_title)
-
-        gesture_grid = QGridLayout()
-
-        gesture_grid.setHorizontalSpacing(15)
-
-        gesture_grid.setVerticalSpacing(15)
-
-        gestures = [
-
-            ("✋", "Open Palm"),
-            ("☝", "Pointing"),
-            ("✊", "Fist"),
-
-            ("✌", "Peace"),
-            ("👍", "Thumb Up"),
-            ("⬅", "Left"),
-
-            ("➡", "Right"),
-            ("⬆", "Up"),
-            ("⬇", "Down")
-
-        ]
-
-        row = 0
-        col = 0
-
-        for icon, name in gestures:
-
-            card = QFrame()
-
-            card.setObjectName("gestureCard")
-
-            layout = QVBoxLayout(card)
-
-            layout.setContentsMargins(15, 15, 15, 15)
-
-            emoji = QLabel(icon)
-
-            emoji.setAlignment(Qt.AlignCenter)
-
-            emoji.setObjectName("gestureEmoji")
-
-            text = QLabel(name)
-
-            text.setAlignment(Qt.AlignCenter)
-
-            text.setObjectName("gestureText")
-
-            layout.addWidget(emoji)
-
-            layout.addWidget(text)
-
-            gesture_grid.addWidget(card, row, col)
-
-            col += 1
-
-            if col == 3:
-
-                col = 0
-
-                row += 1
-
-        main_layout.addLayout(gesture_grid)
-
-        # =====================================
-        # AI Status
-        # =====================================
-
-        self.engine_status = QLabel("🟢 AI Gesture Recognition Running")
-
-        self.engine_status.setObjectName("engineStatus")
-
-        self.engine_status.setAlignment(Qt.AlignCenter)
-
-        main_layout.addWidget(self.engine_status)
+        self.grid.addWidget(self.fist, 0, 2)
 
         main_layout.addStretch()
-            # =====================================================
-    # Update Methods
-    # =====================================================
+# ======================================================
+# SECOND ROW
+# ======================================================
 
-    def set_gesture(
-        self,
-        name="OPEN PALM",
-        icon="✋",
-        confidence=100,
-        fingers=5,
-        hands=1,
-        tracking=True,
-        fps=30,
-    ):
-        """
-        Update the gesture information.
-        """
+        self.thumb_up = GestureCard(
 
-        self.gesture_name.setText(name.upper())
-        self.gesture_icon.setText(icon)
+            "👍",
 
-        self.conf_card.value.setText(f"{confidence}%")
-        self.hand_card.value.setText(str(hands))
-        self.finger_card.value.setText(str(fingers))
-        self.fps_card.value.setText(str(fps))
+            "THUMB UP",
 
-        if tracking:
-            self.track_card.value.setText("TRACKING")
-        else:
-            self.track_card.value.setText("LOST")
+            "🎮 Future Feature",
 
-    def set_ai_status(self, active=True):
-        """
-        Update AI Engine status.
-        """
+            "Confirm Action"
 
-        if active:
-            self.ai_card.value.setText("ACTIVE")
-            self.engine_status.setText("🟢 AI Gesture Recognition Running")
-        else:
-            self.ai_card.value.setText("STOPPED")
-            self.engine_status.setText("🔴 AI Gesture Recognition Stopped")
+        )
 
-    def update_fps(self, fps):
-        self.fps_card.value.setText(str(fps))
+        self.direction = GestureCard(
 
-    def update_confidence(self, confidence):
-        self.conf_card.value.setText(f"{confidence}%")
+            "⬅ ➡ ⬆ ⬇",
 
-    def update_tracking(self, tracking):
-        if tracking:
-            self.track_card.value.setText("TRACKING")
-        else:
-            self.track_card.value.setText("LOST")
+            "DIRECTION",
 
-    def update_hands(self, count):
-        self.hand_card.value.setText(str(count))
+            "🚗 Racing Game",
 
-    def update_fingers(self, count):
-        self.finger_card.value.setText(str(count))
+            "Steering Control"
 
-    def reset(self):
-        """
-        Reset UI to default state.
-        """
+        )
 
-        self.gesture_icon.setText("✋")
-        self.gesture_name.setText("NO GESTURE")
+        self.snake = GestureCard(
 
-        self.ai_card.value.setText("ACTIVE")
-        self.track_card.value.setText("WAITING")
-        self.conf_card.value.setText("0%")
-        self.hand_card.value.setText("0")
-        self.finger_card.value.setText("0")
-        self.fps_card.value.setText("0")
+             "🐍",
 
-        self.engine_status.setText("🟡 Waiting for Hand...")
+            "SNAKE CONTROL",
+
+            "☝ Point Finger",
+
+            "Move Snake"
+
+        )
+
+        self.grid.addWidget(self.thumb_up, 1, 0)
+
+        self.grid.addWidget(self.direction, 1, 1)
+
+        self.grid.addWidget(self.snake, 1, 2)

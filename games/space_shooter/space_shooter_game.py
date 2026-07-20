@@ -11,6 +11,8 @@ from PySide6.QtGui import (
 from PySide6.QtWidgets import QWidget
 
 from controller.controller_manager import controller
+from controller.analytics_manager import analytics
+from controller.controller_manager import controller
 
 
 class SpaceShooterGame(QWidget):
@@ -350,6 +352,22 @@ class SpaceShooterGame(QWidget):
         # ======================================================
 
         self.enemy_speed = 4 + (self.score // 200) * 0.5
+
+        analytics.update(
+
+            game="Space Shooter",
+
+            score=self.score,
+
+            high_score=self.high_score,
+
+            status="Playing",
+
+            time_played="00:00",
+
+            gesture=controller.get_gesture()
+
+        )
         self.update()
             # ==========================================================
     # PAINT GAME

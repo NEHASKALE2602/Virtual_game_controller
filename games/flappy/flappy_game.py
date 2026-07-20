@@ -11,6 +11,8 @@ from PySide6.QtGui import (
 from PySide6.QtWidgets import QWidget, QPushButton
 
 from controller.controller_manager import controller
+from controller.analytics_manager import analytics
+from controller.controller_manager import controller
 
 
 class FlappyGame(QWidget):
@@ -290,8 +292,23 @@ class FlappyGame(QWidget):
                    bird_bottom > pipe["top"] + self.pipe_gap:
 
                     self.game_over = True
+        analytics.update(
 
+            game="Flappy",
+
+            score=self.score,
+
+            high_score=self.high_score,
+
+            status="Playing",
+
+            time_played="00:00",
+
+            gesture=controller.get_gesture()
+
+        )            
         self.update()
+        
     def paintEvent(self, event):
 
         painter = QPainter(self)
