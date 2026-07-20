@@ -1,8 +1,13 @@
 import random
 import math
 
-from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QPainter, QColor, QFont
+from PySide6.QtCore import Qt, QTimer, QPointF
+from PySide6.QtGui import (
+    QPainter,
+    QColor,
+    QFont,
+    QPen
+)
 from PySide6.QtWidgets import QWidget
 
 from controller.controller_manager import controller
@@ -13,34 +18,57 @@ class SpaceShooterGame(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("AI Space Shooter")
-
-        self.setMinimumSize(1000, 700)
+        self.setMinimumSize(900, 600)
         self.setFocusPolicy(Qt.StrongFocus)
 
+        # ============================================
+        # Timer
+        # ============================================
+
         self.timer = QTimer()
+
         self.timer.timeout.connect(self.update_game)
+
         self.timer.start(16)
 
-        self.reset_game()
+        # ============================================
+        # Player
+        # ============================================
 
-    # =====================================================
-    # RESET GAME
-    # =====================================================
+        self.player_x = 450
+        self.player_y = 520
 
-    def reset_game(self):
+        self.target_x = 450
+        self.target_y = 520
+
+        self.ship_width = 60
+        self.ship_height = 70
+
+        self.move_speed = 0.18
+
+        # ============================================
+        # Camera Size
+        # ============================================
+
+        self.camera_width = 640
+        self.camera_height = 480
+
+        # ============================================
+        # Game
+        # ============================================
 
         self.score = 0
+        self.high_score = 0
 
-        self.health = 5
+        self.lives = 3
 
-        self.ship_x = self.width() // 2
+        self.game_over = False
 
-        self.ship_y = self.height() - 120
+        self.fire_delay = 0
 
-        self.target_x = self.ship_x
-
-        self.previous_x = self.ship_x
+        # ============================================
+        # Objects
+        # ============================================
 
         self.bullets = []
 
@@ -50,126 +78,110 @@ class SpaceShooterGame(QWidget):
 
         self.stars = []
 
+        # ============================================
+        # Difficulty
+        # ============================================
+
+        self.enemy_speed = 4
+
         self.spawn_counter = 0
 
-        self.fire_counter = 0
-
-        self.direction_x = 0
-
-        # -------------------------
+        # ============================================
         # Background Stars
-        # -------------------------
+        # ============================================
 
-        for _ in range(180):
+        for i in range(120):
 
             self.stars.append({
 
-                "x": random.randint(0, self.width()),
+                "x": random.randint(0, 900),
 
-                "y": random.randint(0, self.height()),
+                "y": random.randint(0, 600),
 
-                "speed": random.randint(2, 8),
+                "size": random.randint(1, 3),
 
-                "size": random.randint(1, 3)
+                "speed": random.uniform(1, 4)
 
             })
-        # =====================================================
-    # Spawn Enemy
-    # =====================================================
-
-    def spawn_enemy(self):
-
-        enemy = {
-
-            "x": random.randint(60, self.width() - 60),
-
-            "y": -80,
-
-            "radius": 28,
-
-            "speed": random.randint(3, 6)
-
-        }
-
-        self.enemies.append(enemy)
-
-    # =====================================================
-    # Fire Bullet
-    # =====================================================
-
-    def fire_bullet(self):
-
-        dx = self.direction_x
-
-        bullet = {
-
-            "x": self.ship_x,
-
-            "y": self.ship_y - 35,
-
-            "dx": dx,
-
-            "dy": -15,
-
-            "radius": 5
-
-        }
-
-        self.bullets.append(bullet)
-
-    # =====================================================
-    # Update Game
-    # =====================================================
+                # ==========================================================
+    # UPDATE GAME
+    # ==========================================================
 
     def update_game(self):
 
-        # -----------------------------------------
-        # Finger Position
-        # -----------------------------------------
+        if self.game_over:
+            self.update()
+            return
 
-        x, y = controller.get_hand_position()
+        # ======================================================
+        # Camera Hand Position
+        # ======================================================
 
-        if x != 0:
+        hand_x, hand_y = controller.get_hand_position()
 
-            self.target_x = int(x * self.width() / 640)
+        # ------------------------------------------------------
+        # Map Camera (640x480) -> Game Window
+        # ------------------------------------------------------
 
-        # -----------------------------------------
-        # Smooth Ship Movement
-        # -----------------------------------------
+        if hand_x != 0 or hand_y != 0:
 
-        self.ship_x += (self.target_x - self.ship_x) * 0.20
+            self.target_x = (hand_x / self.camera_width) * self.width()
 
-        self.direction_x = self.ship_x - self.previous_x
+            self.target_y = (hand_y / self.camera_height) * self.height()
 
-        self.previous_x = self.ship_x
+            # Keep ship inside screen
 
-        # -----------------------------------------
+            margin = 35
+
+            self.target_x = max(
+                margin,
+                min(self.width() - margin, self.target_x)
+            )
+
+            self.target_y = max(
+                margin,
+                min(self.height() - margin, self.target_y)
+            )
+
+        # ======================================================
+        # Smooth Movement
+        # ======================================================
+
+        self.player_x += (
+            self.target_x - self.player_x
+        ) * self.move_speed
+
+        self.player_y += (
+            self.target_y - self.player_y
+        ) * self.move_speed
+
+        # ======================================================
         # Auto Fire
-        # -----------------------------------------
+        # ======================================================
 
-        self.fire_counter += 1
+        gesture = controller.get_gesture()
 
-        if self.fire_counter >= 8:
+        if self.fire_delay > 0:
 
-            self.fire_counter = 0
+            self.fire_delay -= 1
 
-            self.fire_bullet()
+        if gesture == "POINTING" and self.fire_delay == 0:
 
-        # -----------------------------------------
-        # Spawn Enemy
-        # -----------------------------------------
+            self.bullets.append({
 
-        self.spawn_counter += 1
+                "x": self.player_x,
 
-        if self.spawn_counter >= 35:
+                "y": self.player_y - 30,
 
-            self.spawn_counter = 0
+                "speed": 14
 
-            self.spawn_enemy()
+            })
 
-        # -----------------------------------------
-        # Update Stars
-        # -----------------------------------------
+            self.fire_delay = 8
+
+        # ======================================================
+        # Background Stars
+        # ======================================================
 
         for star in self.stars:
 
@@ -181,66 +193,182 @@ class SpaceShooterGame(QWidget):
 
                 star["x"] = random.randint(0, self.width())
 
-        # -----------------------------------------
-        # Update Bullets
-        # -----------------------------------------
+        # ======================================================
+        # Move Bullets
+        # ======================================================
 
-        remove_bullets = []
+        for bullet in self.bullets[:]:
 
-        for bullet in self.bullets:
-
-            bullet["x"] += bullet["dx"]
-
-            bullet["y"] += bullet["dy"]
+            bullet["y"] -= bullet["speed"]
 
             if bullet["y"] < -20:
 
-                remove_bullets.append(bullet)
-
-        for bullet in remove_bullets:
-
-            if bullet in self.bullets:
-
                 self.bullets.remove(bullet)
+        
+                        # ======================================================
+        # Spawn Enemies
+        # ======================================================
 
-        # -----------------------------------------
-        # Update Enemies
-        # -----------------------------------------
+        self.spawn_counter += 1
 
-        remove_enemy = []
+        if self.spawn_counter >= 35:
 
-        for enemy in self.enemies:
+            self.spawn_counter = 0
+
+            self.enemies.append({
+
+                "x": random.randint(40, self.width() - 40),
+
+                "y": -60,
+
+                "speed": self.enemy_speed,
+
+                "hp": 1,
+
+                "rotation": 0
+
+            })
+
+        # ======================================================
+        # Move Enemies
+        # ======================================================
+
+        for enemy in self.enemies[:]:
 
             enemy["y"] += enemy["speed"]
 
-            if enemy["y"] > self.height() + 80:
+            enemy["rotation"] += 5
 
-                remove_enemy.append(enemy)
+            # ----------------------------------------------
+            # Enemy Missed
+            # ----------------------------------------------
 
-        for enemy in remove_enemy:
-
-            if enemy in self.enemies:
+            if enemy["y"] > self.height() + 60:
 
                 self.enemies.remove(enemy)
 
+                self.lives -= 1
+
+                if self.lives <= 0:
+
+                    self.game_over = True
+
+                    if self.score > self.high_score:
+
+                        self.high_score = self.score
+
+                continue
+
+            # ----------------------------------------------
+            # Ship Collision
+            # ----------------------------------------------
+
+            dx = enemy["x"] - self.player_x
+            dy = enemy["y"] - self.player_y
+
+            distance = math.sqrt(dx * dx + dy * dy)
+
+            if distance < 45:
+
+                self.enemies.remove(enemy)
+
+                self.lives -= 1
+
+                self.explosions.append({
+
+                    "x": enemy["x"],
+
+                    "y": enemy["y"],
+
+                    "radius": 10,
+
+                    "alpha": 255
+
+                })
+
+                if self.lives <= 0:
+
+                    self.game_over = True
+
+                    if self.score > self.high_score:
+
+                        self.high_score = self.score
+
+                continue
+
+            # ----------------------------------------------
+            # Bullet Collision
+            # ----------------------------------------------
+
+            for bullet in self.bullets[:]:
+
+                dx = bullet["x"] - enemy["x"]
+                dy = bullet["y"] - enemy["y"]
+
+                if math.sqrt(dx * dx + dy * dy) < 35:
+
+                    if bullet in self.bullets:
+
+                        self.bullets.remove(bullet)
+
+                    if enemy in self.enemies:
+
+                        self.enemies.remove(enemy)
+
+                    self.score += 10
+
+                    self.explosions.append({
+
+                        "x": enemy["x"],
+
+                        "y": enemy["y"],
+
+                        "radius": 10,
+
+                        "alpha": 255
+
+                    })
+
+                    break
+
+        # ======================================================
+        # Explosion Animation
+        # ======================================================
+
+        for explosion in self.explosions[:]:
+
+            explosion["radius"] += 4
+
+            explosion["alpha"] -= 18
+
+            if explosion["alpha"] <= 0:
+
+                self.explosions.remove(explosion)
+
+        # ======================================================
+        # Difficulty Increase
+        # ======================================================
+
+        self.enemy_speed = 4 + (self.score // 200) * 0.5
         self.update()
-        # =====================================================
-    # Paint Game
-    # =====================================================
+            # ==========================================================
+    # PAINT GAME
+    # ==========================================================
 
     def paintEvent(self, event):
 
         painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
 
-        # ==========================================
-        # Background
-        # ==========================================
+        # ======================================================
+        # Space Background
+        # ======================================================
 
-        painter.fillRect(self.rect(), QColor(5, 5, 20))
+        painter.fillRect(self.rect(), QColor(8, 12, 30))
 
-        # ==========================================
+        # ======================================================
         # Stars
-        # ==========================================
+        # ======================================================
 
         painter.setPen(Qt.NoPen)
 
@@ -252,178 +380,339 @@ class SpaceShooterGame(QWidget):
 
                 int(star["x"]),
                 int(star["y"]),
+
                 star["size"],
                 star["size"]
 
             )
 
-        # ==========================================
+        # ======================================================
         # Bullets
-        # ==========================================
+        # ======================================================
 
-        painter.setBrush(QColor(255, 255, 0))
+        painter.setBrush(QColor(0, 255, 255))
 
         for bullet in self.bullets:
 
-            painter.drawEllipse(
+            painter.drawRoundedRect(
 
-                int(bullet["x"] - bullet["radius"]),
-                int(bullet["y"] - bullet["radius"]),
-                bullet["radius"] * 2,
-                bullet["radius"] * 2
+                int(bullet["x"]) - 3,
+                int(bullet["y"]),
+
+                6,
+                22,
+
+                3,
+                3
 
             )
 
-        # ==========================================
+        # ======================================================
         # Enemies
-        # ==========================================
+        # ======================================================
 
         for enemy in self.enemies:
 
+            painter.save()
+
+            painter.translate(
+
+                enemy["x"],
+                enemy["y"]
+
+            )
+
+            painter.rotate(enemy["rotation"])
+
             painter.setBrush(QColor(255, 70, 70))
 
+            painter.setPen(Qt.NoPen)
+
             painter.drawEllipse(
 
-                int(enemy["x"] - enemy["radius"]),
-                int(enemy["y"] - enemy["radius"]),
-                enemy["radius"] * 2,
-                enemy["radius"] * 2
+                -22,
+                -22,
+
+                44,
+                44
 
             )
 
-            painter.setBrush(Qt.black)
+            painter.setBrush(Qt.white)
 
-            painter.drawEllipse(
-                int(enemy["x"] - 12),
-                int(enemy["y"] - 8),
-                8,
-                8
-            )
+            painter.drawEllipse(-10, -8, 6, 6)
+            painter.drawEllipse(4, -8, 6, 6)
 
-            painter.drawEllipse(
-                int(enemy["x"] + 4),
-                int(enemy["y"] - 8),
-                8,
-                8
-            )
+            painter.restore()
 
-            painter.setBrush(QColor(255, 255, 255))
-
-            painter.drawEllipse(
-                int(enemy["x"] - 4),
-                int(enemy["y"] + 8),
-                8,
-                8
-            )
-
-        # ==========================================
-        # Spaceship
-        # ==========================================
-
-        painter.setBrush(QColor(0, 220, 255))
-
-        ship_points = [
-
-            (int(self.ship_x), int(self.ship_y - 35)),
-
-            (int(self.ship_x - 28), int(self.ship_y + 30)),
-
-            (int(self.ship_x), int(self.ship_y + 10)),
-
-            (int(self.ship_x + 28), int(self.ship_y + 30))
-
-        ]
-
-        from PySide6.QtCore import QPoint
-
-        painter.drawPolygon(
-
-            QPoint(*ship_points[0]),
-            QPoint(*ship_points[1]),
-            QPoint(*ship_points[2]),
-            QPoint(*ship_points[3])
-
-        )
-
-        # ==========================================
-        # Engine Flame
-        # ==========================================
-
-        painter.setBrush(QColor(255, 180, 0))
-
-        painter.drawEllipse(
-
-            int(self.ship_x - 8),
-            int(self.ship_y + 28),
-            16,
-            26
-
-        )
-            # ==========================================
-        # HUD
-        # ==========================================
-
-        painter.setPen(Qt.white)
-
-        font = QFont()
-        font.setPointSize(16)
-        font.setBold(True)
-
-        painter.setFont(font)
-
-        painter.drawText(20, 35, f"Score : {self.score}")
-        painter.drawText(20, 65, f"Health : {self.health}")
-
-        painter.drawText(
-            self.width() - 230,
-            35,
-            "INDEX FINGER AIM"
-        )
-
-        painter.drawText(
-            self.width() - 230,
-            65,
-            "AUTO SHOOT"
-        )
-
-        # ==========================================
-        # Finger Target
-        # ==========================================
+        # ======================================================
+        # Explosions
+        # ======================================================
 
         painter.setPen(Qt.NoPen)
 
-        painter.setBrush(QColor(0, 255, 120))
+        for explosion in self.explosions:
 
-        painter.drawEllipse(
+            painter.setBrush(
 
-            int(self.target_x - 8),
-            int(self.ship_y - 110),
-            16,
-            16
+                QColor(
+
+                    255,
+                    180,
+                    0,
+
+                    explosion["alpha"]
+
+                )
+
+            )
+
+            painter.drawEllipse(
+
+                explosion["x"] - explosion["radius"],
+
+                explosion["y"] - explosion["radius"],
+
+                explosion["radius"] * 2,
+
+                explosion["radius"] * 2
+
+            )
+
+        # ======================================================
+        # Player Ship
+        # ======================================================
+
+        painter.save()
+
+        painter.translate(
+
+            self.player_x,
+
+            self.player_y
 
         )
 
-    # =====================================================
-    # Resize
-    # =====================================================
+        painter.setPen(Qt.NoPen)
 
-    def resizeEvent(self, event):
+        # Main Body
 
-        super().resizeEvent(event)
+        painter.setBrush(QColor(0, 220, 255))
 
-    # =====================================================
-    # Keyboard
-    # =====================================================
+        painter.drawPolygon([
+
+            QPointF(0, -35),
+
+            QPointF(-22, 25),
+
+            QPointF(0, 10),
+
+            QPointF(22, 25)
+
+        ])
+
+        # Cockpit
+
+        painter.setBrush(QColor(120, 240, 255))
+
+        painter.drawEllipse(
+
+            -8,
+            -12,
+
+            16,
+            20
+
+        )
+
+        # Wings
+
+        painter.setBrush(QColor(80, 170, 255))
+
+        painter.drawRect(-30, 5, 12, 8)
+
+        painter.drawRect(18, 5, 12, 8)
+
+        painter.restore()
+
+        # ======================================================
+        # Score
+        # ======================================================
+
+        painter.setPen(Qt.white)
+
+        font = QFont("Segoe UI", 16, QFont.Bold)
+
+        painter.setFont(font)
+
+        painter.drawText(
+
+            20,
+            35,
+
+            f"Score : {self.score}"
+
+        )
+
+        painter.drawText(
+
+            20,
+            65,
+
+            f"High Score : {self.high_score}"
+
+        )
+
+        # ======================================================
+        # Lives
+        # ======================================================
+
+        painter.setPen(Qt.NoPen)
+
+        for i in range(self.lives):
+
+            painter.setBrush(QColor(255, 60, 60))
+
+            painter.drawEllipse(
+
+                self.width() - 40 - (i * 35),
+
+                20,
+
+                22,
+
+                22
+
+            )
+
+        # ======================================================
+        # Game Over
+        # ======================================================
+
+        if self.game_over:
+
+            painter.fillRect(
+
+                self.rect(),
+
+                QColor(0, 0, 0, 170)
+
+            )
+
+            title = QFont("Segoe UI", 34, QFont.Bold)
+
+            painter.setFont(title)
+
+            painter.setPen(Qt.white)
+
+            painter.drawText(
+
+                self.rect(),
+
+                Qt.AlignCenter,
+
+                "GAME OVER"
+
+            )
+
+            small = QFont("Segoe UI", 18)
+
+            painter.setFont(small)
+
+            painter.drawText(
+
+                self.width() // 2 - 70,
+
+                self.height() // 2 + 60,
+
+                f"Score : {self.score}"
+
+            )
+
+            painter.drawText(
+
+                self.width() // 2 - 95,
+
+                self.height() // 2 + 95,
+
+                "Press R : Restart"
+
+            )
+
+            painter.drawText(
+
+                self.width() // 2 - 85,
+
+                self.height() // 2 + 125,
+
+                "Press ESC : Exit"
+
+            )
+                # ==========================================================
+    # KEYBOARD CONTROLS
+    # ==========================================================
 
     def keyPressEvent(self, event):
+
+        # ---------------------------------------
+        # Restart
+        # ---------------------------------------
+
+        if event.key() == Qt.Key_R and self.game_over:
+
+            self.score = 0
+
+            self.lives = 3
+
+            self.enemy_speed = 4
+
+            self.spawn_counter = 0
+
+            self.game_over = False
+
+            self.player_x = self.width() // 2
+            self.player_y = self.height() - 80
+
+            self.target_x = self.player_x
+            self.target_y = self.player_y
+
+            self.bullets.clear()
+            self.enemies.clear()
+            self.explosions.clear()
+
+            return
+
+        # ---------------------------------------
+        # Exit
+        # ---------------------------------------
 
         if event.key() == Qt.Key_Escape:
 
             self.close()
 
-    # =====================================================
-    # Close
-    # =====================================================
+    # ==========================================================
+    # SHOW EVENT
+    # ==========================================================
+
+    def showEvent(self, event):
+
+        self.timer.start(16)
+
+        super().showEvent(event)
+
+    # ==========================================================
+    # HIDE EVENT
+    # ==========================================================
+
+    def hideEvent(self, event):
+
+        self.timer.stop()
+
+        super().hideEvent(event)
+
+    # ==========================================================
+    # CLOSE EVENT
+    # ==========================================================
 
     def closeEvent(self, event):
 
@@ -432,3 +721,4 @@ class SpaceShooterGame(QWidget):
             self.timer.stop()
 
         event.accept()
+           
